@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractComponent from './abstract-component';
 
 const createStatisticsTemplate = (films) => {
   const statistics = films.length;
@@ -8,25 +8,13 @@ const createStatisticsTemplate = (films) => {
   );
 };
 
-export default class Statistics {
+export default class Statistics extends AbstractComponent {
   constructor(films) {
+    super();
     this._films = films;
-    this._element = null;
   }
 
   getTemplate() {
     return createStatisticsTemplate(this._films);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,10 +1,5 @@
 import {MONTHS} from './const';
 
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
@@ -29,9 +24,19 @@ export const getRandomCollection = (array, min, max) => {
   return Array.from(uniqueValue);
 };
 
+export const getReleaseDate = () => {
+  const month = getRandomIntegerNumber(0, 11);
+  const day = (month === 1) ? getRandomIntegerNumber(1, 29) : getRandomIntegerNumber(1, 30);
+  return {
+    year: getRandomIntegerNumber(1950, 2018),
+    month: MONTHS[month],
+    day
+  };
+};
+
 export const getRandomDate = () => {
   const now = Date.now();
-  const rand = getRandomIntegerNumber(0, 10000);
+  const rand = getRandomIntegerNumber(0, 100000000);
   return (new Date(now - rand)).toISOString();
 };
 
@@ -78,20 +83,13 @@ export const sortMostCommentedFilms = (films) => {
   });
 };
 
-export const createElement = (htmlText) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = htmlText;
+export const sortFilmsByDate = (films) => {
+  const clone = films.slice();
 
-  return newElement.firstChild;
+  return clone.sort((a, b) => {
+    const dateA = new Date(a.date.year, MONTHS.indexOf(a.date.month), a.date.day);
+    const dateB = new Date(b.date.year, MONTHS.indexOf(b.date.month), b.date.day);
+    return dateA - dateB; // сортировка по возрастающей дате
+  });
 };
 
-export const render = (container, element, position) => {
-  switch (position) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
-};

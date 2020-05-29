@@ -1,4 +1,5 @@
-import {extractDate, createElement} from '../utils';
+import {extractDate} from '../utils/common';
+import AbstractComponent from './abstract-component';
 
 const createCommentTemplate = (comment) => {
   const date = extractDate(comment.date);
@@ -21,10 +22,10 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export default class Comment {
+export default class Comment extends AbstractComponent {
   constructor(comment) {
+    super();
     this._comment = comment;
-    this._element = null;
   }
 
   generateCommentsList() {
@@ -39,17 +40,5 @@ export default class Comment {
 
   getTemplate(comments) {
     return createCommentTemplate(comments);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._comment));
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

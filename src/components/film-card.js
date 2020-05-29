@@ -1,8 +1,9 @@
-import {createElement} from '../utils';
+import AbstractComponent from './abstract-component';
 
 const createFilmCardTemplate = (card) => {
-  const {title, rating, year, duration, genre,
+  const {title, rating, duration, genre,
     poster, description, comments, watchlist, watched, favorite} = card;
+  const {year} = card.date;
   const isWatched = watched ? `film-card__controls-item--active` : ``;
   const isWatchlist = watchlist ? `film-card__controls-item--active` : ``;
   const isFavorite = favorite ? `film-card__controls-item--active` : ``;
@@ -27,25 +28,25 @@ const createFilmCardTemplate = (card) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractComponent {
   constructor(card) {
+    super();
     this._card = card;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._card);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setTitleClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setPosterClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, handler);
+  }
+
+  setCommentsClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, handler);
   }
 }

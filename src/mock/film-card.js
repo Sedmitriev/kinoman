@@ -1,6 +1,6 @@
 import {getRandomIntegerNumber, getRandomFloatNumber, getRandomArrayItem,
-  getRandomCollection, getRandomDate} from '../utils';
-import {MAX_COUNT_COMMENTS} from "../const.js";
+  getRandomCollection, getRandomDate, getReleaseDate} from '../utils/common';
+import {MAX_COUNT_COMMENTS} from "../utils/const.js";
 
 const genres = [`drama`, `thriller`, `comedy`, `sci-fi`, `action`, `melodrama`, `biography`, `fantasy`, `criminal`];
 
@@ -69,7 +69,7 @@ export const generateFilmCard = () => {
   return {
     title: getRandomArrayItem(titles),
     rating: getRandomFloatNumber(7, 10),
-    year: getRandomIntegerNumber(1950, 2018),
+    date: getReleaseDate(),
     duration: getDuration(),
     genre: getRandomCollection(genres, 1, 3),
     poster: getRandomArrayItem(posters),

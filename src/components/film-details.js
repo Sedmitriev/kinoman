@@ -1,5 +1,5 @@
 import Comment from "./comment.js";
-import {createElement} from '../utils';
+import AbstractComponent from "./abstract-component.js";
 
 const renderGenres = (genres) => {
   return genres.map((item) => {
@@ -11,6 +11,8 @@ const createFilmDetailsTemplate = (card, commetsList) => {
   const {title, rating, duration, genre,
     poster, ageRating, description, director, writers,
     actors, comments, watchlist, watched, favorite} = card;
+  const {year, month, day} = card.date;
+  const fulldate = `${day} ${month} ${year}`;
   const isWatched = watched ? `checked` : ``;
   const isWatchlist = watchlist ? `checked` : ``;
   const isFavorite = favorite ? `checked` : ``;
@@ -55,7 +57,7 @@ const createFilmDetailsTemplate = (card, commetsList) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">30 March 1945</td>
+                  <td class="film-details__cell">${fulldate}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -133,10 +135,10 @@ const createFilmDetailsTemplate = (card, commetsList) => {
   );
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractComponent {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
   }
 
   getTemplate() {
@@ -144,17 +146,7 @@ export default class FilmDetails {
     return createFilmDetailsTemplate(this._film, commetsList);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-
-      // this._addEventClosePopup();
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setCloseBtnClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
   }
 }
