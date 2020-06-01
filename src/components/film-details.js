@@ -1,5 +1,6 @@
 import Comment from "./comment.js";
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import {getFormatDate} from "../utils/common";
 
 const renderGenres = (genres) => {
   return genres.map((item) => {
@@ -11,8 +12,7 @@ const createFilmDetailsTemplate = (card, commetsList) => {
   const {title, rating, duration, genre,
     poster, ageRating, description, director, writers,
     actors, comments, watchlist, watched, favorite} = card;
-  const {year, month, day} = card.date;
-  const fulldate = `${day} ${month} ${year}`;
+  const fulldate = getFormatDate(card.date);
   const isWatched = watched ? `checked` : ``;
   const isWatchlist = watchlist ? `checked` : ``;
   const isFavorite = favorite ? `checked` : ``;
@@ -135,10 +135,18 @@ const createFilmDetailsTemplate = (card, commetsList) => {
   );
 };
 
-export default class FilmDetails extends AbstractComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
+    this._closeBtnClickHandler = null;
+    this._addToWatchlistClickHandler = null;
+    this._alreadyWatchedClickHandler = null;
+    this._addToFavouriteClickHandler = null;
+  }
+
+  rerender() {
+    super.rerender();
   }
 
   getTemplate() {
@@ -147,6 +155,33 @@ export default class FilmDetails extends AbstractComponent {
   }
 
   setCloseBtnClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
+    this._closeBtnClickHandler = handler;
+  }
+
+  setAddToWatchlistClickHandler(handler) {
+    this.getElement().querySelector(`#watchlist`)
+      .addEventListener(`click`, handler);
+    this._addToWatchlistClickHandler = handler;
+  }
+
+  setAlreadyWatchedClickHandler(handler) {
+    this.getElement().querySelector(`#watched`)
+      .addEventListener(`click`, handler);
+    this._alreadyWatchedClickHandler = handler;
+  }
+
+  setAddToFavouriteClickHandler(handler) {
+    this.getElement().querySelector(`#favorite`)
+      .addEventListener(`click`, handler);
+    this._addToFavouriteClickHandler = handler;
+  }
+
+  recoveryListeners() {
+    this.setCloseBtnClickHandler(this._closeBtnClickHandler);
+    this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
+    this.setAlreadyWatchedClickHandler(this._alreadyWatchedClickHandler);
+    this.setAddToFavouriteClickHandler(this._addToFavouriteClickHandler);
   }
 }

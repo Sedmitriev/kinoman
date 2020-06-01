@@ -1,5 +1,5 @@
 import {getRandomIntegerNumber, getRandomFloatNumber, getRandomArrayItem,
-  getRandomCollection, getRandomDate, getReleaseDate} from '../utils/common';
+  getRandomCollection, getRandomDate, formatDuration} from '../utils/common';
 import {MAX_COUNT_COMMENTS} from "../utils/const.js";
 
 const genres = [`drama`, `thriller`, `comedy`, `sci-fi`, `action`, `melodrama`, `biography`, `fantasy`, `criminal`];
@@ -44,17 +44,17 @@ const getDescription = () => {
   return description.join(`.`);
 };
 
-const getDuration = () => {
-  let hours = getRandomIntegerNumber(1, 3);
-  let minutes = getRandomIntegerNumber(0, 60);
-  return `${hours}h ${minutes}m`;
-};
+// const getDuration = () => {
+//   let hours = getRandomIntegerNumber(1, 3);
+//   let minutes = getRandomIntegerNumber(0, 60);
+//   return `${hours}h ${minutes}m`;
+// };
 
 const generateComment = () => {
   return {
     author: getRandomArrayItem(authors),
     text: getDescription(),
-    date: getRandomDate(),
+    date: getRandomDate(new Date(2020, 0, 1), new Date()),
     emotion: getRandomArrayItem(emotions)
   };
 };
@@ -69,8 +69,8 @@ export const generateFilmCard = () => {
   return {
     title: getRandomArrayItem(titles),
     rating: getRandomFloatNumber(7, 10),
-    date: getReleaseDate(),
-    duration: getDuration(),
+    date: getRandomDate(new Date(1990, 0, 1), new Date()),
+    duration: formatDuration(),
     genre: getRandomCollection(genres, 1, 3),
     poster: getRandomArrayItem(posters),
     ageRating: getRandomArrayItem(ageRating),

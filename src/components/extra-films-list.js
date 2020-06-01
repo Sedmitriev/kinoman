@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component';
 
-const createExtraFilmsSectionTemplate = (title) => {
+const createExtraFilmsListTemplate = (title) => {
   return (
     `<section class="films-list--extra">
       <h2 class="films-list__title">${title}</h2>
@@ -10,13 +10,14 @@ const createExtraFilmsSectionTemplate = (title) => {
   );
 };
 
-export default class ExtraFilmsSection extends AbstractComponent {
+export default class ExtraFilmsList extends AbstractComponent {
   constructor(title) {
     super();
     this._title = title;
+    this.filmsListContainer = this.getElement().querySelector(`.films-list__container`);
   }
 
   getTemplate() {
-    return createExtraFilmsSectionTemplate(this._title);
+    return createExtraFilmsListTemplate(this._title);
   }
 }

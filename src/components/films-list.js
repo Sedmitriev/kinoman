@@ -11,6 +11,12 @@ const createFilmsListTemplate = () => {
 };
 
 export default class FilmsList extends AbstractComponent {
+  constructor() {
+    super();
+
+    this.filmsListElement = this.getElement().querySelector(`.films-list__container`);
+  }
+
   getTemplate() {
     return createFilmsListTemplate();
   }

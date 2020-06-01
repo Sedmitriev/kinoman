@@ -1,4 +1,5 @@
 import {MONTHS} from './const';
+import moment from "moment";
 
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
@@ -34,10 +35,13 @@ export const getReleaseDate = () => {
   };
 };
 
-export const getRandomDate = () => {
-  const now = Date.now();
-  const rand = getRandomIntegerNumber(0, 100000000);
-  return (new Date(now - rand)).toISOString();
+// export const getRandomDate = () => {
+//   const now = Date.now();
+//   const rand = getRandomIntegerNumber(0, 100000000);
+//   return (new Date(now - rand)).toISOString();
+// };
+export const getRandomDate = (start, end) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
 
 export const extractDate = (str) => {
@@ -93,3 +97,16 @@ export const sortFilmsByDate = (films) => {
   });
 };
 
+export const formatDuration = () => {
+  const mins = getRandomIntegerNumber(80, 180);
+  const duration = moment.duration(mins, `minutes`);
+  return moment.utc(duration.as(`milliseconds`)).format(`H[h] mm[m]`);
+};
+
+export const getFormatYear = (date) => {
+  return moment(date).format(`YYYY`);
+};
+
+export const getFormatDate = (date) => {
+  return moment(date).format(`DD MMMM YYYY`);
+};
