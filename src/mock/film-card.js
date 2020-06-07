@@ -23,6 +23,8 @@ const authors = [`Ivan`, `Alex`, `Max`, `Anna`, `Nataly`];
 
 const emotions = [`smile`, `sleeping`, `puke`, `angry`];
 
+const country = [`USA`, `Russia`, `Finland`, `Germany`];
+
 let text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula
 feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam
 nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh
@@ -44,14 +46,15 @@ const getDescription = () => {
   return description.join(`.`);
 };
 
-// const getDuration = () => {
-//   let hours = getRandomIntegerNumber(1, 3);
-//   let minutes = getRandomIntegerNumber(0, 60);
-//   return `${hours}h ${minutes}m`;
-// };
+let idCounter = 0;
+
+const generateId = () => {
+  return idCounter++;
+};
 
 const generateComment = () => {
   return {
+    id: generateId(),
     author: getRandomArrayItem(authors),
     text: getDescription(),
     date: getRandomDate(new Date(2020, 0, 1), new Date()),
@@ -65,23 +68,42 @@ const generateComments = (count) => {
   return new Array(randomCountComments).fill(``).map(generateComment);
 };
 
+const genereteFilmInfo = () => {
+  return {
+    "title": getRandomArrayItem(titles),
+    "alternative_title": getRandomArrayItem(titles),
+    "total_rating": getRandomFloatNumber(5, 10),
+    "poster": getRandomArrayItem(posters),
+    "age_rating": getRandomArrayItem(ageRating),
+    "director": getRandomArrayItem(directors),
+    "writers": getRandomCollection(writers, 1, 2),
+    "actors": getRandomCollection(actors, 1, 5),
+    "release": {
+      "date": getRandomDate(new Date(1990, 0, 1), new Date()),
+      "release_country": getRandomArrayItem(country)
+    },
+    "runtime": formatDuration(),
+    "genre": getRandomCollection(genres, 1, 3),
+    "description": getDescription(),
+  };
+};
+
+const genereteUserDetails = () => {
+  return {
+    "personal_rating": getRandomIntegerNumber(0, 30),
+    "watchlist": Math.random() > 0.5,
+    "already_watched": Math.random() > 0.5,
+    "watching_date": getRandomDate(new Date(2020, 0, 1), new Date()),
+    "favorite": Math.random() > 0.5,
+  };
+};
+
 export const generateFilmCard = () => {
   return {
-    title: getRandomArrayItem(titles),
-    rating: getRandomFloatNumber(7, 10),
-    date: getRandomDate(new Date(1990, 0, 1), new Date()),
-    duration: formatDuration(),
-    genre: getRandomCollection(genres, 1, 3),
-    poster: getRandomArrayItem(posters),
-    ageRating: getRandomArrayItem(ageRating),
-    description: getDescription(),
-    director: getRandomArrayItem(directors),
-    writers: getRandomCollection(writers, 1, 2),
-    actors: getRandomCollection(actors, 1, 5),
-    comments: generateComments(MAX_COUNT_COMMENTS),
-    watchlist: Math.random() > 0.5,
-    watched: Math.random() > 0.5,
-    favorite: Math.random() > 0.5,
+    "id": generateId(),
+    "comments": generateComments(MAX_COUNT_COMMENTS),
+    "film_info": genereteFilmInfo(),
+    "user_details": genereteUserDetails()
   };
 };
 

@@ -1,10 +1,8 @@
-import {extractDate} from '../utils/common';
-import AbstractComponent from './abstract-component';
+import {getFormatDatetime} from '../utils/common';
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const createCommentTemplate = (comment) => {
-  const date = extractDate(comment.date);
-  const {year, month, day, hours, minutes} = date;
-  const fulldate = `${year}/${month}/${day} ${hours}:${minutes}`;
+  const fulldate = getFormatDatetime(comment.date);
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -22,23 +20,42 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export default class Comment extends AbstractComponent {
+export default class Comment extends AbstractSmartComponent {
   constructor(comment) {
     super();
     this._comment = comment;
+    this._isDeletingMode = false;
   }
 
-  generateCommentsList() {
-    this._comment.sort((a, b) => {
-      return Date.parse(b.date) - Date.parse(a.date);
-    });
+  // generateCommentsList() {
+  //   this._comment.sort((a, b) => {
+  //     return Date.parse(b.date) - Date.parse(a.date);
+  //   });
 
-    return this._comment.reduce((acc, item) => {
-      return acc + this.getTemplate(item);
-    }, ``);
-  }
+  //   return this._comment.reduce((acc, item) => {
+  //     return acc + this.getTemplate(item);
+  //   }, ``);
+  // }
 
   getTemplate(comments) {
     return createCommentTemplate(comments);
+  }
+
+  setDeleteButtonHandler(handler) {
+    const deleteButton = this.getElement().querySelector(`.film-details__comment-delete`);
+    deleteButton.addEventListener(`click`, (evt) => {
+      this._isDeletingMode = true;
+
+      this.rerender();
+      handler(evt);
+    });
+  }
+
+  getCommentId() {
+    return this._comment.id;
+  }
+
+  recoveryListeners() {
+
   }
 }

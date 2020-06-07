@@ -1,6 +1,8 @@
-import Comment from "./comment.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {getFormatDate} from "../utils/common";
+
+const EMOJI_WIDTH = 55;
+const EMOJI_HEIGHT = 55;
 
 const renderGenres = (genres) => {
   return genres.map((item) => {
@@ -8,11 +10,14 @@ const renderGenres = (genres) => {
   }).join(``);
 };
 
-const createFilmDetailsTemplate = (card, commetsList) => {
-  const {title, rating, duration, genre,
-    poster, ageRating, description, director, writers,
-    actors, comments, watchlist, watched, favorite} = card;
-  const fulldate = getFormatDate(card.date);
+const createFilmDetailsTemplate = (card, commentsCount) => {
+  const {title, total_rating: rating,
+    alternative_title: alterTitle, runtime, genre,
+    poster, age_rating: ageRating, description,
+    director, writers, actors} = card.film_info;
+  const {watchlist, already_watched: watched, favorite} = card.user_details;
+  const fulldate = getFormatDate(card.film_info.release.date);
+  const country = card.film_info.release.release_country;
   const isWatched = watched ? `checked` : ``;
   const isWatchlist = watchlist ? `checked` : ``;
   const isFavorite = favorite ? `checked` : ``;
@@ -34,7 +39,7 @@ const createFilmDetailsTemplate = (card, commetsList) => {
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${title}</h3>
-                  <p class="film-details__title-original">Original: ${title}</p>
+                  <p class="film-details__title-original">Original: ${alterTitle}</p>
                 </div>
 
                 <div class="film-details__rating">
@@ -61,11 +66,11 @@ const createFilmDetailsTemplate = (card, commetsList) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${runtime}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">USA</td>
+                  <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
@@ -93,11 +98,9 @@ const createFilmDetailsTemplate = (card, commetsList) => {
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
-            <ul class="film-details__comments-list">
-              ${commetsList}
-            </ul>
+            <ul class="film-details__comments-list"></ul>
 
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label"></div>
@@ -109,22 +112,22 @@ const createFilmDetailsTemplate = (card, commetsList) => {
               <div class="film-details__emoji-list">
                 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
                 <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji" data-type="smile">
                 </label>
 
                 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
                 <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji" data-type="sleeping">
                 </label>
 
                 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
                 <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji" data-type="puke">
                 </label>
 
                 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
                 <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji" data-type="angry">
                 </label>
               </div>
             </div>
@@ -136,22 +139,32 @@ const createFilmDetailsTemplate = (card, commetsList) => {
 };
 
 export default class FilmDetails extends AbstractSmartComponent {
-  constructor(film) {
+  constructor(film, commentsCount) {
     super();
     this._film = film;
+    this._commentsCount = commentsCount;
     this._closeBtnClickHandler = null;
     this._addToWatchlistClickHandler = null;
     this._alreadyWatchedClickHandler = null;
     this._addToFavouriteClickHandler = null;
+    this._emojiClickHandler = null;
   }
 
-  rerender() {
-    super.rerender();
-  }
+  // rerender() {
+  //   super.rerender();
+  // }
 
   getTemplate() {
-    const commetsList = new Comment(this._film.comments).generateCommentsList();
-    return createFilmDetailsTemplate(this._film, commetsList);
+    // const commetsList = new Comment(this._film.comments).generateCommentsList();
+    return createFilmDetailsTemplate(this._film, this._commentsCount);
+  }
+
+  getEmojiContainer() {
+    return this.getElement().querySelector(`.film-details__add-emoji-label`);
+  }
+
+  getFormElement() {
+    return this.getElement().querySelector(`.film-details__inner`);
   }
 
   setCloseBtnClickHandler(handler) {
@@ -178,10 +191,35 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._addToFavouriteClickHandler = handler;
   }
 
+  setEmojiById(id) {
+    const emojiContainer = this.getElement().querySelector(`.film-details__add-emoji-label`);
+    const emojiElement = this.getElement().querySelector(`[for="${id}"] img`).cloneNode(true);
+
+    emojiElement.width = EMOJI_WIDTH;
+    emojiElement.height = EMOJI_HEIGHT;
+
+    if (emojiContainer.innerHTML !== ``) {
+      emojiContainer.innerHTML = ``;
+    }
+
+    emojiContainer.appendChild(emojiElement);
+  }
+
+  setEmojiClickHandler(handler) {
+    const emojis = this.getElement().querySelectorAll(`.film-details__emoji-item`);
+
+    emojis.forEach((it) => {
+      it.addEventListener(`change`, handler);
+    });
+
+    this._emojiClickHandler = handler;
+  }
+
   recoveryListeners() {
     this.setCloseBtnClickHandler(this._closeBtnClickHandler);
     this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
     this.setAlreadyWatchedClickHandler(this._alreadyWatchedClickHandler);
     this.setAddToFavouriteClickHandler(this._addToFavouriteClickHandler);
+    this.setEmojiClickHandler(this._emojiClickHandler);
   }
 }

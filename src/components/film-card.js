@@ -2,9 +2,11 @@ import AbstractComponent from "./abstract-component";
 import {getFormatYear} from "../utils/common";
 
 const createFilmCardTemplate = (card) => {
-  const {title, rating, duration, genre,
-    poster, description, comments, watchlist, watched, favorite} = card;
-  const year = getFormatYear(card.date);
+  const comments = card.comments;
+  const {title, total_rating: rating, runtime, genre,
+    poster, description} = card.film_info;
+  const {watchlist, already_watched: watched, favorite} = card.user_details;
+  const year = getFormatYear(card.film_info.release.date);
   const isWatched = watched ? `film-card__controls-item--active` : ``;
   const isWatchlist = watchlist ? `film-card__controls-item--active` : ``;
   const isFavorite = favorite ? `film-card__controls-item--active` : ``;
@@ -14,7 +16,7 @@ const createFilmCardTemplate = (card) => {
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
-        <span class="film-card__duration">${duration}</span>
+        <span class="film-card__duration">${runtime}</span>
         <span class="film-card__genre">${genre.join(`, `)}</span>
       </p>
       <img src="./images/posters/${poster}.jpg" alt="" class="film-card__poster">

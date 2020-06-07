@@ -1,4 +1,3 @@
-import {MONTHS} from './const';
 import moment from "moment";
 
 export const getRandomArrayItem = (array) => {
@@ -25,49 +24,17 @@ export const getRandomCollection = (array, min, max) => {
   return Array.from(uniqueValue);
 };
 
-export const getReleaseDate = () => {
-  const month = getRandomIntegerNumber(0, 11);
-  const day = (month === 1) ? getRandomIntegerNumber(1, 29) : getRandomIntegerNumber(1, 30);
-  return {
-    year: getRandomIntegerNumber(1950, 2018),
-    month: MONTHS[month],
-    day
-  };
-};
-
-// export const getRandomDate = () => {
-//   const now = Date.now();
-//   const rand = getRandomIntegerNumber(0, 100000000);
-//   return (new Date(now - rand)).toISOString();
-// };
-export const getRandomDate = (start, end) => {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-};
-
-export const extractDate = (str) => {
-  let ms = Date.parse(str);
-  let date = new Date(ms);
-
-  return {
-    year: date.getFullYear(),
-    month: MONTHS[date.getMonth()],
-    day: date.getDate(),
-    hours: date.getHours(),
-    minutes: date.getMinutes(),
-  };
-};
-
 export const sortTopRatedFilms = (films) => {
   const clone = films.slice();
 
-  const isRated = films.some((film) => film.rating);
+  const isRated = films.some((film) => film.film_info.total_rating);
 
   if (!isRated) {
     return ``;
   }
 
   return clone.sort((a, b) => {
-    return Number(b.rating) - Number(a.rating);
+    return Number(b.film_info.total_rating) - Number(a.film_info.total_rating);
   });
 };
 
@@ -91,10 +58,15 @@ export const sortFilmsByDate = (films) => {
   const clone = films.slice();
 
   return clone.sort((a, b) => {
-    const dateA = new Date(a.date.year, MONTHS.indexOf(a.date.month), a.date.day);
-    const dateB = new Date(b.date.year, MONTHS.indexOf(b.date.month), b.date.day);
+    const dateA = new Date(a.date.getFullYear(), a.date.getMonth(), a.date.getDate());
+    const dateB = new Date(b.date.getFullYear(), b.date.getMonth(), b.date.getDate());
     return dateA - dateB; // сортировка по возрастающей дате
   });
+};
+
+
+export const getRandomDate = (start, end) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
 
 export const formatDuration = () => {
@@ -109,4 +81,8 @@ export const getFormatYear = (date) => {
 
 export const getFormatDate = (date) => {
   return moment(date).format(`DD MMMM YYYY`);
+};
+
+export const getFormatDatetime = (date) => {
+  return moment(date).format(`YYYY/MM/DD HH:mm`);
 };
